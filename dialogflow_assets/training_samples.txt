@@ -1,0 +1,56 @@
+# Welcome intends:
+
+1. Hello! How can I help you? You can say "New Order" or "Track Order"
+2. Good day! What can I do for you today? You can say "New Order" or "Track Order" to place a order or track existing order.
+3. Greetings! How can I assist? You can say "New Order" or "Track Order"
+4. “Hi there 👋! Welcome to Hungry Panda. Would you like to place a new order or track your order today?”
+5. “Hi! 👋 You can place a new order or track your order. Which one would you like to do?”
+6. “Hello there! I can help you with new orders or tracking existing ones. What would you like?”
+
+
+
+
+# Default fallback Intents
+
+1. Sorry, I didn’t catch that. Would you like to place a new order or track an existing one?
+2. Hmm, I’m not sure what you mean. You can say “New Order” to start ordering food or “Track Order” to check your delivery status.
+3. My bad! I can help you with placing a new order or tracking your order. Which one would you like?
+4. Could you rephrase that? I can help you with food delivery. Options: New Order | Track Order.
+
+
+
+# Menu
+
+🍔 Burgers
+- Chicken Burger
+- Cheese Burger
+- Veggie Burger
+
+🍕 Pizza
+- Meat Lover's Pizza
+- Pepperoni Pizza
+- BBQ Chicken Pizza
+
+🍟 Sides
+- French Fries
+- Onion Rings
+
+🥤 Drinks
+- Coca-Cola
+- Sprite
+- Water
+
+🍦 Desserts
+- Ice Cream
+- Brownie
+
+
+# Prices
+
+
+
+
+
+Now Generate a combo food-card of:
+chicken burger + french-fries + cocacola
+add default logo and no price tag needed

@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hungry Panda - Fast Food Delivery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        
+        /* Dialogflow Chatbot Styling */
+        df-messenger::part(chat-bubble) {
+            width: 80px !important;
+            height: 80px !important;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .logo .item-image {
+            width: 80px;
+            height: 80px;
+            aspect-ratio: 1;
+            object-fit: contain;
+            margin-bottom: 0;
+        }
+
+        .panda-emoji {
+            font-size: 2.5rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .menu-section {
+            background: white;
+            margin: 2rem 0;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .menu-section:nth-child(even) {
+            animation-delay: 0.2s;
+        }
+
+        .menu-section:nth-child(odd) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .menu-header h2 {
+            font-size: 2.2rem;
+            color: #333;
+        }
+
+        .menu-header .emoji {
+            font-size: 2.5rem;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .menu-item {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+
+        .item-image-placeholder {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(45deg, #ddd, #f0f0f0);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px dashed #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover .item-image-placeholder {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .item-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-item:hover .item-image {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-item h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-item p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+
+        .add-to-cart {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .add-to-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .combos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .combo-placeholder {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe8e8 100%);
+            border: 2px dashed #ff6b6b;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            color: #ff6b6b;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .combo-placeholder:hover {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        footer {
+            background: rgba(51, 51, 51, 0.95);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-section a {
+            color: white;          /* make text white */
+            text-decoration: none; /* remove underline */
+        }
+
+        .footer-section a:hover {
+            color: #ddd;           /* slightly lighter white on hover */
+        }
+
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        /* Social Links Styling */
+        .social-links {
+            display: flex;
+            gap: 15px;                /* space between icons */
+            justify-content: center;  /* center align */
+            margin-top: 20px;
+        }
+
+        .social-links a img {
+            width: 32px;   /* icon size */
+            height: 32px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .social-links a img:hover {
+            transform: scale(1.2);  /* zoom effect */
+            opacity: 0.8;           /* slight fade */
+        }
+
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .menu-header h2 {
+                font-size: 1.8rem;
+            }
+
+            nav {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hungry Panda</title>
+        <link rel="icon" type="image/png" sizes="32x32" href="images/logo.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="images/logo.png">
+        <link rel="stylesheet" href="styles.css"> <!-- optional -->
+    </head>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="images/logo.png" alt="Food Item" class="item-image">
+                    <span>Hungry Panda</span>
+                </div>
+                <nav>
+                    <a href="#pizzas" class="nav-link">Pizzas</a>
+                    <a href="#burgers" class="nav-link">Burgers</a>
+                    <a href="#sides" class="nav-link">Sides</a>
+                    <a href="#drinks" class="nav-link">Drinks</a>
+                    <a href="#desserts" class="nav-link">Desserts</a>
+                    <a href="#combos" class="nav-link">Combos</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Welcome to Hungry Panda! 🐼</h1>
+            <p>Delicious food delivered fast to your door</p>
+            <a href="#pizzas" class="cta-button">Order Now</a>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- Pizzas Section -->
+        <section id="pizzas" class="menu-section">
+            <div class="menu-header">
+                <span class="emoji">🍕</span>
+                <h2>Pizzas</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="images/meat_lover's_pizza.png" alt="Food Item" class="item-image">
+                    <h3>Meat Lover's Pizza</h3>
+                    <p>Loaded with pepperoni, sausage, ham, and bacon on a crispy crust</p>
+                    <div class="price">890 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/pepperoni_pizza.png" alt="Food Item" class="item-image">
+                    <h3>Pepperoni Pizza</h3>
+                    <p>Classic pepperoni with mozzarella cheese and tomato sauce</p>
+                    <div class="price">720 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/bbq_chicken_pizza.png" alt="Food Item" class="item-image">
+                    <h3>BBQ Chicken Pizza</h3>
+                    <p>Grilled chicken with BBQ sauce, red onions, and cilantro</p>
+                    <div class="price">690 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Burgers Section -->
+        <section id="burgers" class="menu-section">
+            <div class="menu-header">
+                <span class="emoji">🍔</span>
+                <h2>Burgers</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="images/chicken_burger.png" alt="Food Item" class="item-image">
+                    <h3>Chicken Burger</h3>
+                    <p>Crispy chicken breast with lettuce, tomato, and mayo</p>
+                    <div class="price">299 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/cheese_burger.png" alt="Food Item" class="item-image">
+                    <h3>Cheese Burger</h3>
+                    <p>Juicy beef patty with melted cheese, pickles, and special sauce</p>
+                    <div class="price">250 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/veggie_burger.png" alt="Food Item" class="item-image">
+                    <h3>Veggie Burger</h3>
+                    <p>Plant-based patty with fresh vegetables and avocado</p>
+                    <div class="price">220 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sides Section -->
+        <section id="sides" class="menu-section">
+            <div class="menu-header">
+                <span class="emoji">🍟</span>
+                <h2>Sides</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="images/french_fries.png" alt="Food Item" class="item-image">
+                    <h3>French Fries</h3>
+                    <p>Golden crispy fries seasoned to perfection</p>
+                    <div class="price">120 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/onion_rings.png" alt="Food Item" class="item-image">
+                    <h3>Onion Rings</h3>
+                    <p>Crispy battered onion rings served with dipping sauce</p>
+                    <div class="price">150 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Drinks Section -->
+        <section id="drinks" class="menu-section">
+            <div class="menu-header">
+                <span class="emoji">🥤</span>
+                <h2>Drinks</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="images/coca-cola.png" alt="Food Item" class="item-image">
+                    <h3>Coca-Cola</h3>
+                    <p>Classic refreshing cola drink</p>
+                    <div class="price">40 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/sprite.png" alt="Food Item" class="item-image">
+                    <h3>Sprite</h3>
+                    <p>Crisp lemon-lime flavored soda</p>
+                    <div class="price">40 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/water.png" alt="Food Item" class="item-image">
+                    <h3>Water</h3>
+                    <p>Pure refreshing bottled water</p>
+                    <div class="price">20 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Desserts Section -->
+        <section id="desserts" class="menu-section">
+            <div class="menu-header">
+                <span class="emoji">🍦</span>
+                <h2>Desserts</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="images/ice-cream.png" alt="Food Item" class="item-image">
+                    <h3>Ice Cream</h3>
+                    <p>Creamy vanilla ice cream served in a cup</p>
+                    <div class="price">100 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/brownie.png" alt="Food Item" class="item-image">
+                    <h3>Brownie</h3>
+                    <p>Rich chocolate brownie served warm</p>
+                    <div class="price">100</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Combos Section -->
+        <section id="combos" class="menu-section">
+            <div class="menu-header">
+                <span class="emoji">🎯</span>
+                <h2>Combos</h2>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <img src="images/combo_1.png" alt="Food Item" class="item-image">
+                    <h3>The Hunger Buster</h3>
+                    <p>Relax, munch, and enjoy the perfect meal 🍔</p>
+                    <div class="price">450 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/combo_2.png" alt="Food Item" class="item-image">
+                    <h3>Pizza Lovers’ Duo</h3>
+                    <p>Why eat alone? Double the taste, double the happiness 😋</p>
+                    <div class="price">1250 tk</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+                <div class="menu-item">
+                    <img src="images/combo_3.png" alt="Food Item" class="item-image">
+                    <h3>Happy Ending Combo</h3>
+                    <p>From cheesy bites to sweet delights — treat yourself today 😍</p>
+                    <div class="price">950</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+
+    <!---############### Panda-Bot Section ###############--->
+
+    <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+        <df-messenger
+            intent="WELCOME"
+            chat-title="Panda-chatbot"
+            agent-id="1e0da665-adea-454d-bd85-76d1b510826e"
+            language-code="en"
+            style="--df-messenger-chat-bubble-size: 80px; width: 80px; height: 80px;"
+    ></df-messenger>
+
+    <!-- ######################################################## -->
+
+
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                <h3>Contact Us</h3>
+                    <p>📞 <a href="tel:+8801783445245">+8801783445245</a></p>
+                    <p>📧 <a href="mailto:niloysannyal@gmail.com">niloysannyal@gmail.com</a></p>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Delivery Hours</h3>
+                    <p>Saturday - Thursday</p>
+                    <p>9:00 AM - 11:00 PM</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <div class="social-links">
+                        <a href="https://linkedin.com/in/niloysannyal" target="_blank">
+                            <img src="images/linkedin.png" alt="LinkedIn">
+                        </a>
+                        <a href="https://github.com/niloysannyal" target="_blank">
+                            <img src="images/github.png" alt="GitHub">
+                        </a>
+                        <a href="https://facebook.com/niloy.sannyal.3/" target="_blank">
+                            <img src="images/facebook.png" alt="Facebook">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <p>&copy; 2025 Niloy Sannyal. All rights reserved. 🐼</p>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.nav-link, .cta-button').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId.startsWith('#')) {
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        // Active navigation highlighting
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.menu-section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop - 100;
+                if (scrollY >= sectionTop) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // Add to cart functionality (placeholder for chatbot integration)
+        document.querySelectorAll('.add-to-cart').forEach(button => {
+            button.addEventListener('click', function() {
+                const item = this.closest('.menu-item');
+                const itemName = item.querySelector('h3').textContent;
+                const itemPrice = item.querySelector('.price').textContent;
+                
+                // This is where you can integrate with your Dialogflow chatbot
+                console.log(`Added to cart: ${itemName} - ${itemPrice}`);
+                
+                // Visual feedback
+                this.textContent = 'Added! ✓';
+                this.style.background = 'linear-gradient(45deg, #2ecc71, #27ae60)';
+                
+                setTimeout(() => {
+                    this.textContent = 'Add to Cart';
+                    this.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+                }, 1500);
+            });
+        });
+
+        // Parallax effect for hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
