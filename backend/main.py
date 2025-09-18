@@ -1,10 +1,9 @@
 import uvicorn
-from fastapi import FastAPI
-from fastapi import Request
+from fastapi import FastAPI, Request
 from starlette.responses import JSONResponse
-from backend import db_helper
-from backend import generic_helper
-from backend.generic_helper import get_str_from_food_dict
+from . import db_helper
+from . import generic_helper
+from .generic_helper import get_str_from_food_dict
 
 app = FastAPI()
 
