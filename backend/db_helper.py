@@ -1,25 +1,42 @@
 import mysql.connector
+import os
 
 
-# Create connection to the database
-cnx = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="root",
-    database="pandeyji_eatery"
-)
+# Get Connection function
+
+# For localhost
+# def get_connection():
+#     return mysql.connector.connect(
+#         host="localhost",
+#         user="root",
+#         password="root",
+#         database="pandeyji_eatery"
+#     )
+
+# For deployment
+def get_connection():
+    return mysql.connector.connect(
+        host=os.getenv("MYSQLHOST", "switchback.proxy.rlwy.net"),
+        user=os.getenv("MYSQLUSER", "root"),
+        password=os.getenv("MYSQLPASSWORD", "UtrlxdUtwZCUAHzBnJFOUZyqryDBfAAU"),
+        database=os.getenv("MYSQLDATABASE", "railway"),
+        port=int(os.getenv("MYSQLPORT", 17233))
+    )
 
 def insert_order_tracking(order_id, status):
+    cnx = get_connection()
     cursor = cnx.cursor()
 
     insert_query = "INSERT INTO order_tracking (order_id, status) VALUES (%s, %s)"
     cursor.execute(insert_query, (order_id, status))
     cnx.commit()
     cursor.close()
+    cnx.close()
 
 
 
 def get_total_order_price(order_id: int):
+    cnx = get_connection()
     cursor = cnx.cursor()
 
     query = f"SELECT get_total_order_price({order_id})"
@@ -35,6 +52,7 @@ def get_total_order_price(order_id: int):
 
 def insert_order_item(item: str, quantity: int, next_order_id: int):
     try:
+        cnx = get_connection()
         cursor = cnx.cursor()
         cursor.callproc("insert_order_item", (item, quantity, next_order_id))
         cnx.commit()
@@ -59,6 +77,7 @@ def insert_order_item(item: str, quantity: int, next_order_id: int):
 
 
 def get_next_order_id():
+    cnx = get_connection()
     # Create cursor object
     cursor = cnx.cursor()
     # Write a SQL query
@@ -74,6 +93,7 @@ def get_next_order_id():
 
 
 def get_order_status(order_id: int):
+    cnx = get_connection()
     # Create cursor object
     cursor = cnx.cursor()
 
@@ -94,4 +114,4 @@ def get_order_status(order_id: int):
 
 
 if __name__ == "__main__":
-    print(get_total_order_price(102))
+    print(get_total_order_price(1001))
