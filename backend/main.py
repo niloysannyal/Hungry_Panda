@@ -7,6 +7,7 @@ from .generic_helper import get_str_from_food_dict
 
 app = FastAPI()
 
+
 food_menu = {
     "Burgers": [
         {"name": "Chicken Burger", "price": 299},
@@ -33,9 +34,19 @@ food_menu = {
     ],
     "Combos": [
         {"name": "The Hunger Buster", "price": 450},
-        {"name": "Pizza Lover's Duo", "price": 1250},
+        {"name": "Pizza Lovers' Duo", "price": 1250},
         {"name": "Happy Ending Combo", "price": 950}
     ]
+}
+
+
+category_icons = {
+    "Burgers": "🍔",
+    "Pizzas": "🍕",
+    "Sides": "🍟",
+    "Drinks": "🥤",
+    "Desserts": "🍦",
+    "Combos": "🍽️"
 }
 
 
@@ -55,8 +66,11 @@ async def handle_request(request: Request):
     output_contexts = payload["queryResult"]["outputContexts"]
     session_id = generic_helper.extract_session_id(output_contexts[0]["name"])
 
+    print(intent)
+
     intend_handler_dict = {
         "new.order": initialize_order,
+        "full.menu": handle_category_menu,
         "order.pizzas": handle_category_menu,
         "order.burgers": handle_category_menu,
         "order.sides": handle_category_menu,
@@ -86,7 +100,7 @@ def initialize_order(parameters, session_id):
 
     print(f"New order initialized for session: {session_id}")
 
-    fulfillment_text = "Great! Starting a new order. What would you like to have? We’ve got 🍔 Burgers | 🍕 Pizza | 🍟 Sides | 🥤 Drinks | 🍦 Desserts | 🍽️ Combos"
+    fulfillment_text = "Great! Starting a new order. What would you like to have? We’ve got 🍔 Burgers | 🍕 Pizza | 🍟 Sides | 🥤 Drinks | 🍦 Desserts | 🍽️ Combos | Or, you can see our full menu"
 
     return JSONResponse(content={
         "fulfillmentText": fulfillment_text
@@ -94,21 +108,45 @@ def initialize_order(parameters, session_id):
 
 
 
+def show_full_menu(parameters, session_id):
+    messages = []
+
+    # Go through each category in menu
+    for category, items in food_menu.items():
+        icon = category_icons.get(category, "📌")
+        messages.append({"text": {"text": [f"{icon} {category}:"]}})
+
+        # Add each item inside category
+        for item in items:
+            messages.append({"text": {"text": [f"{item['name']} - {item['price']} BDT"]}})
+
+    # Add final instruction
+    messages.append({"text": {"text": ["You can place order by mentioning quantity before item name."]}})
+
+    return JSONResponse(content={"fulfillmentMessages": messages})
+
+
+
+
 def handle_category_menu(parameters, session_id):
     category_name = parameters["category"].capitalize()
 
-    if category_name == "Burgers":
-        icon = "🍔"
-    elif category_name == "Pizzas":
-        icon = "🍕"
-    elif category_name == "Sides":
-        icon = "🍟"
-    elif category_name == "Drinks":
-        icon = "🥤"
-    elif category_name == "Desserts":
-        icon = "🍦"
-    else:
-        icon = "🍽️"
+    if category_name == "Full menu":
+        messages = []
+        messages.append({"text": {"text": ["Sure! Here’s the full Hungry Panda menu 🐼:"]}})
+        for category, items in food_menu.items():
+            # Choose icon
+            icon = category_icons.get(category)
+            messages.append({"text": {"text": [f"{icon} {category}:"]}})
+            count = 1
+            for item in items:
+                messages.append({"text": {"text": [f"{count}. {item['name']} – {item['price']} BDT"]}})
+                count += 1
+
+        messages.append({"text": {"text": ["You can place an order by mentioning quantity before item name."]}})
+        return JSONResponse(content={"fulfillmentMessages": messages})
+
+    icon = category_icons.get(category_name)
 
     items = food_menu.get(category_name, [])
     if not items:
@@ -298,7 +336,7 @@ def complete_order(parameters: dict, session_id: str):
     # Step 2: If confirmation provided → act accordingly
     confirmation = confirmation.lower()
 
-    if confirmation in ["yes", "y", "yep", "sure", "ok", "okay"]:
+    if confirmation == "yes":
         order_id = save_to_db(order)
         if order_id == -1:
             return JSONResponse(content={"fulfillmentText": "⚠️ Oops! Something went wrong saving your order."})
@@ -311,7 +349,7 @@ def complete_order(parameters: dict, session_id: str):
         )
         del inprogress_orders[session_id]
 
-    else:  # Negative confirmation
+    elif confirmation == "no":  # Negative confirmation
         fulfillment_text = (
             "❌ Okay, I won’t place the order yet.\n"
             "👉 You can Add or Remove items from your order.\n"
@@ -319,7 +357,13 @@ def complete_order(parameters: dict, session_id: str):
         )
         # Notice: We do NOT delete the order here. User can continue editing.
 
+    else:
+        fulfillment_text = "🤔 Sorry, I didn’t get that. Do you want to confirm your order? Please say yes or no"
+
+
     return JSONResponse(content={"fulfillmentText": fulfillment_text})
+
+
 
 
 
@@ -342,7 +386,6 @@ def save_to_db(order: dict):
     db_helper.insert_order_tracking(next_order_id, "processing")
 
     return next_order_id
-
 
 
 
