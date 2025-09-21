@@ -1,6 +1,25 @@
-# 🐼 Panda Bot – Hungry Panda Food Ordering Chatbot
+# 🐼 Panda-chatbot – Hungry Panda Food Ordering Chatbot
 
-**Panda Bot** is an AI-powered chatbot designed to provide a seamless and interactive food ordering experience for the **Hungry Panda** website. Users can browse menus, add or remove items, and place orders directly via conversational interactions powered by **Dialogflow** and **FastAPI**.  
+**Panda Bot** is an AI-powered chatbot designed to provide a seamless and interactive food ordering experience for the **Hungry Panda** website. Users can browse menus, add or remove items, and place orders directly via conversational interactions powered by **Dialogflow** and **FastAPI**.
+
+## 🌐 Live Demo
+
+<p align="center">
+  <a href="https://hungry-panda-niloysannyal.vercel.app" target="_blank">
+    <img src="https://img.shields.io/badge/🚀%20Live%20Website-Hungry%20Panda-orange?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Live Website Button"/>
+  </a>
+</p>
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/2b258dcb-b129-46dc-80d4-516890346bff" alt="Full Website Screenshot 1" width="80%" />
+</p>
+
+### 💬 Chatbot Section
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0f22bd3b-bec9-429f-8d3a-fd77c136eddb" alt="Chatbot Cropped Screenshot" width="35%" />
+</p>
+
 
 ---
 
