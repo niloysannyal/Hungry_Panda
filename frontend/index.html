@@ -20,12 +20,6 @@
             min-height: 100vh;
         }
 
-        /* Dialogflow Chatbot Styling */
-        df-messenger::part(chat-bubble) {
-            width: 80px !important;
-            height: 80px !important;
-        }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -710,12 +704,13 @@
 
     <!---############### Panda-Bot Section ###############--->
     <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-<df-messenger
-  intent="WELCOME"
-  chat-title="Panda-chatbot"
-  agent-id="1e0da665-adea-454d-bd85-76d1b510826e"
-  language-code="en"
-></df-messenger> ######################################################## -->
+    <df-messenger
+      intent="WELCOME"
+      chat-title="Panda-chatbot"
+      agent-id="1e0da665-adea-454d-bd85-76d1b510826e"
+      language-code="en"
+    ></df-messenger> 
+    <!---#################################################--->
 
     <footer>
         <div class="container">
